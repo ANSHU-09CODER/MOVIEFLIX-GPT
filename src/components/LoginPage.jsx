@@ -56,7 +56,7 @@ const Login = () => {
         .then(() => {
           formRef.current.reset(); // form clear
           setSuccessMessage("Account created successfully!");
-         
+
         })
         .catch((error) => {
           setErrorMessage(error.code + " - " + error.message);
