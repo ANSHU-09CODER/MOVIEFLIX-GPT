@@ -8,6 +8,10 @@ import {
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { render } from "@testing-library/react";
+import { addUser } from "../utils/userSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 const inputClass =
   "w-full p-4 bg-gray-700/80 text-white rounded-md outline-none border border-gray-500 focus:border-white";
@@ -17,6 +21,9 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const formRef = useRef(null);
   const name = useRef(null);
@@ -56,6 +63,17 @@ const Login = () => {
         .then(() => {
           formRef.current.reset(); // form clear
           setSuccessMessage("Account created successfully!");
+          const {uid,email,displayName} =auth.currentUser
+          dispatch(
+            addUser(
+              {
+                uid:uid,
+                email:email,
+                displayName:displayName,
+              }
+            )
+          );
+          navigate("/browse")
 
         })
         .catch((error) => {

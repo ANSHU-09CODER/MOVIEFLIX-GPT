@@ -1,8 +1,11 @@
-
-import Body from './components/BodyLayout';
+import { Provider } from "react-redux";
+import Body from "./components/BodyLayout";
+import AppStore from "./utils/AppStore";
 function App() {
   return (
-    <Body/>
+    <Provider store={AppStore}>
+      <Body />
+    </Provider>
   );
 }
 
