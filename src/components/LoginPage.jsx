@@ -7,22 +7,34 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { render } from "@testing-library/react";
 import { addUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
 
 const inputClass =
   "w-full p-4 bg-gray-700/80 text-white rounded-md outline-none border border-gray-500 focus:border-white";
 
+const getFriendlyError = (code) => {
+  switch (code) {
+    case "auth/email-already-in-use":
+      return "This email is already registered. Try signing in.";
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "Incorrect email or password.";
+    case "auth/too-many-requests":
+      return "Too many attempts. Please try again later.";
+    case "auth/network-request-failed":
+      return "Network error. Check your connection.";
+    default:
+      return "Something went wrong. Please try again.";
+  }
+};
+
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const formRef = useRef(null);
@@ -31,9 +43,8 @@ const Login = () => {
   const password = useRef(null);
   const confirmPassword = useRef(null);
 
-  const handleButtonClick = (e) => {
+  const handleButtonClick = async (e) => {
     e.preventDefault();
-    setSuccessMessage(null);
 
     const message = checkValidData(
       isSignInForm ? null : name.current.value,
@@ -44,65 +55,48 @@ const Login = () => {
     );
 
     setErrorMessage(message);
-    if (message) return; // validation fail: form ko clear nahi karte, user theek kar sake
+    if (message) return; // validation fail: form clear nahi karte
 
     setLoading(true);
 
-    if (!isSignInForm) {
-      // Sign Up
-      createUserWithEmailAndPassword(
-        auth,
-        email.current.value.trim(),
-        password.current.value,
-      )
-        .then((userCredential) =>
-          updateProfile(userCredential.user, {
-            displayName: name.current.value.trim(),
-          }),
-        )
-        .then(() => {
-          formRef.current.reset(); // form clear
-          setSuccessMessage("Account created successfully!");
-          const {uid,email,displayName} =auth.currentUser
-          dispatch(
-            addUser(
-              {
-                uid:uid,
-                email:email,
-                displayName:displayName,
-              }
-            )
-          );
-          navigate("/browse")
+    try {
+      const emailValue = email.current.value.trim();
+      const passwordValue = password.current.value;
 
-        })
-        .catch((error) => {
-          setErrorMessage(error.code + " - " + error.message);
-        })
-        .finally(() => setLoading(false));
-    } else {
-      // Sign In
-      signInWithEmailAndPassword(
-        auth,
-        email.current.value.trim(),
-        password.current.value,
-      )
-        .then(() => {
-          formRef.current.reset(); // form clear
-          // Yahan navigate("/browse") kar sakte ho
-        })
-        .catch((error) => {
-          setErrorMessage(error.code + " - " + error.message);
-        })
-        .finally(() => setLoading(false));
+      if (!isSignInForm) {
+        // Sign Up
+        const { user } = await createUserWithEmailAndPassword(
+          auth,
+          emailValue,
+          passwordValue,
+        );
+        await updateProfile(user, { displayName: name.current.value.trim() });
+
+        // Header ke listener ne displayName: null store kiya ho sakta hai,
+        // isliye profile update ke baad dobara dispatch karte hain.
+        dispatch(
+          addUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+          }),
+        );
+      } else {
+        // Sign In
+        await signInWithEmailAndPassword(auth, emailValue, passwordValue);
+        // Dispatch + navigate Header ka onAuthStateChanged handle karta hai
+      }
+    } catch (error) {
+      setErrorMessage(getFriendlyError(error.code));
+    } finally {
+      setLoading(false);
     }
   };
 
   const toggleIsSignInForm = () => {
-    setIsSignInForm(!isSignInForm);
+    setIsSignInForm((prev) => !prev);
     setErrorMessage(null);
-    setSuccessMessage(null);
-    formRef.current.reset(); // form badalte waqt purani values hata do
+    formRef.current.reset(); // purani values hata do
   };
 
   return (
@@ -117,7 +111,7 @@ const Login = () => {
         />
       </div>
 
-      <div className="relative flex justify-center items-center min-h-[500px] h-auto py-8 mt-20 mx-auto bg-black/80 w-3/12 rounded-lg">
+      <div className="relative flex justify-center items-center min-h-[500px] h-auto py-8 mt-20 mx-auto bg-black/80 w-full max-w-md rounded-lg">
         <form
           ref={formRef}
           onSubmit={handleButtonClick}
@@ -132,6 +126,7 @@ const Login = () => {
               ref={name}
               type="text"
               placeholder="Enter your Name"
+              autoComplete="name"
               className={inputClass}
             />
           )}
@@ -140,6 +135,7 @@ const Login = () => {
             ref={email}
             type="email"
             placeholder="Enter your Email"
+            autoComplete="email"
             className={inputClass}
           />
 
@@ -147,6 +143,7 @@ const Login = () => {
             ref={password}
             type="password"
             placeholder="Enter your password"
+            autoComplete={isSignInForm ? "current-password" : "new-password"}
             className={inputClass}
           />
 
@@ -155,6 +152,7 @@ const Login = () => {
               ref={confirmPassword}
               type="password"
               placeholder="Confirm your password"
+              autoComplete="new-password"
               className={inputClass}
             />
           )}
@@ -162,12 +160,6 @@ const Login = () => {
           {errorMessage && (
             <p className="text-red-400 text-xs bg-red-500/10 border border-red-500/30 rounded px-2 py-1">
               {errorMessage}
-            </p>
-          )}
-
-          {successMessage && (
-            <p className="text-green-400 text-xs bg-green-500/10 border border-green-500/30 rounded px-2 py-1">
-              {successMessage}
             </p>
           )}
 
@@ -179,15 +171,16 @@ const Login = () => {
             {loading ? "Please wait..." : isSignInForm ? "Sign In" : "Sign Up"}
           </button>
 
-          <p
-            className="text-gray-400 text-sm text-center cursor-pointer"
+          <button
+            type="button"
             onClick={toggleIsSignInForm}
+            className="text-gray-400 text-sm text-center"
           >
             {isSignInForm ? "New to Netflix? " : "Already registered? "}
             <span className="text-white font-semibold">
               {isSignInForm ? "Sign Up" : "Sign In"}
             </span>
-          </p>
+          </button>
         </form>
       </div>
     </div>
