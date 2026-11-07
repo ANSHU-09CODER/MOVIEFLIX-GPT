@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { addNowPlayingMovies } from "../utils/movieSlice";
+import { addPopularMovies } from "../utils/movieSlice";
 import { useEffect } from "react";
 import { API_OPTIONS } from "../utils/constants";
 
@@ -7,23 +7,23 @@ const usePopularMovies =()=>
 {
     const dispatch = useDispatch();
 
-  const getNowPlayingMovies = async () => {
+  const getPopularMovies = async () => {
     try {
       const response = await fetch(
-        "https://api.themoviedb.org/3/movie/now_playing?page=1",
+        "https://api.themoviedb.org/3/movie/popular?&page=1",
         API_OPTIONS
       );
       const json = await response.json();
       console.log(json.results);
-      dispatch(addNowPlayingMovies(json.results)); // try ke andar
+      dispatch(addPopularMovies(json.results)); // try ke andar
     } catch (error) {
       console.error("TMDB fetch error:", error);
     }
   };
 
   useEffect(() => {
-    getNowPlayingMovies();
+    getPopularMovies();
   }, []);
 }
 
-export default useNowPlayingMovies;
+export default usePopularMovies;

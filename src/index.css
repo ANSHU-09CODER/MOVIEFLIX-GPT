@@ -4,4 +4,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* cards ki row ka scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* page ka side scrollbar (scroll chalta rahega, bas bar nahi dikhega) */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
 /* stylelint-enable at-rule-no-unknown */
