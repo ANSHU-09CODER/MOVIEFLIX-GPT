@@ -55,7 +55,7 @@ const Login = () => {
     );
 
     setErrorMessage(message);
-    if (message) return; // validation fail: form clear nahi karte
+    if (message) return; 
 
     setLoading(true);
 
@@ -64,7 +64,7 @@ const Login = () => {
       const passwordValue = password.current.value;
 
       if (!isSignInForm) {
-        // Sign Up
+       
         const { user } = await createUserWithEmailAndPassword(
           auth,
           emailValue,
@@ -72,8 +72,7 @@ const Login = () => {
         );
         await updateProfile(user, { displayName: name.current.value.trim() });
 
-        // Header ke listener ne displayName: null store kiya ho sakta hai,
-        // isliye profile update ke baad dobara dispatch karte hain.
+      
         dispatch(
           addUser({
             uid: user.uid,
@@ -82,9 +81,9 @@ const Login = () => {
           }),
         );
       } else {
-        // Sign In
+       
         await signInWithEmailAndPassword(auth, emailValue, passwordValue);
-        // Dispatch + navigate Header ka onAuthStateChanged handle karta hai
+
       }
     } catch (error) {
       setErrorMessage(getFriendlyError(error.code));
@@ -96,7 +95,7 @@ const Login = () => {
   const toggleIsSignInForm = () => {
     setIsSignInForm((prev) => !prev);
     setErrorMessage(null);
-    formRef.current.reset(); // purani values hata do
+    formRef.current.reset(); 
   };
 
   return (

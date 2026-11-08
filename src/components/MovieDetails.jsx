@@ -47,7 +47,6 @@ const MovieDetails = () => {
     <div className="relative w-full h-screen overflow-hidden bg-black text-white">
       <Header />
 
-      {/* poore page par poster */}
       {imageUrl && (
         <img
           className="absolute inset-0 w-full h-full object-cover"
@@ -58,7 +57,7 @@ const MovieDetails = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent"></div>
       <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black to-transparent"></div>
 
-      {/* title + buttons (MainContainer jaisa) */}
+     
       <div className="relative z-20 h-full flex flex-col justify-center px-6 md:px-16 pt-24">
         <h1 className="text-3xl md:text-6xl font-extrabold max-w-2xl drop-shadow-lg">
           {movie.title}
@@ -98,8 +97,8 @@ const MovieDetails = () => {
             More Info
           </button>
         </div>
-
-        {/* More Info par ye panel dikhega */}
+r
+      
         {showInfo && (
           <div className="mt-6 max-w-xl bg-black/70 border border-white/20 rounded-lg p-4 md:p-5">
             <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm md:text-base text-gray-300">
@@ -123,7 +122,7 @@ const MovieDetails = () => {
         )}
       </div>
 
-      {/* Play dabane par trailer popup */}
+     
       {showTrailer && (
         <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"

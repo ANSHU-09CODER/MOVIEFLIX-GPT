@@ -15,7 +15,7 @@ const usePopularMovies =()=>
       );
       const json = await response.json();
       console.log(json.results);
-      dispatch(addPopularMovies(json.results)); // try ke andar
+      dispatch(addPopularMovies(json.results)); 
     } catch (error) {
       console.error("TMDB fetch error:", error);
     }

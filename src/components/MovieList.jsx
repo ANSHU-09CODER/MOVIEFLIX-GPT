@@ -9,7 +9,7 @@ const MovieList = ({ title, movies }) => {
   const scroll = (direction) => {
     const row = rowRef.current;
     if (!row) return;
-    // row ki visible width ka 80% scroll karo
+
     row.scrollBy({
       left: direction * row.clientWidth * 0.8,
       behavior: "smooth",
@@ -21,7 +21,7 @@ const MovieList = ({ title, movies }) => {
       <h1 className="text-lg md:text-2xl font-bold text-white py-4">{title}</h1>
 
       <div className="relative">
-        {/* Left arrow */}
+    
         <button
           onClick={() => scroll(-1)}
           aria-label="Scroll left"
@@ -30,7 +30,7 @@ const MovieList = ({ title, movies }) => {
           ‹
         </button>
 
-        {/* Cards row */}
+  
         <div
           ref={rowRef}
           className="flex gap-3 overflow-x-scroll pb-4 scrollbar-hide scroll-smooth"
@@ -39,7 +39,7 @@ const MovieList = ({ title, movies }) => {
 <MoviesCard key={movie.id} id={movie.id} poster_path={movie.poster_path} />          ))}
         </div>
 
-        {/* Right arrow */}
+    
         <button
           onClick={() => scroll(1)}
           aria-label="Scroll right"

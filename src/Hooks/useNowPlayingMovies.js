@@ -14,7 +14,7 @@ const useNowPlayingMovies =()=>
         API_OPTIONS
       );
       const json = await response.json();
-      dispatch(addNowPlayingMovies(json.results)); // try ke andar
+      dispatch(addNowPlayingMovies(json.results));
     } catch (error) {
       console.error("TMDB fetch error:", error);
     }

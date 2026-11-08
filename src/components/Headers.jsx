@@ -17,7 +17,7 @@ const Header = () => {
         const { uid, email, displayName } = user;
         dispatch(addUser({ uid, email, displayName }));
 
-        // sirf login page (ya home) par ho to browse par bhejo
+      
         const path = window.location.pathname;
         if (path === "/login" || path === "/") navigate("/browse");
       } else {
