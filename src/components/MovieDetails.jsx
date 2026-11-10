@@ -97,7 +97,6 @@ const MovieDetails = () => {
             More Info
           </button>
         </div>
-r
       
         {showInfo && (
           <div className="mt-6 max-w-xl bg-black/70 border border-white/20 rounded-lg p-4 md:p-5">

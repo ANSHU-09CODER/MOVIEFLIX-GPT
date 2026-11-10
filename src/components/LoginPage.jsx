@@ -8,7 +8,8 @@ import {
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { addUser } from "../utils/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 const inputClass =
   "w-full p-4 bg-gray-700/80 text-white rounded-md outline-none border border-gray-500 focus:border-white";
@@ -36,6 +37,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
+  const user = useSelector((store) => store.user);
 
   const formRef = useRef(null);
   const name = useRef(null);
@@ -55,7 +57,7 @@ const Login = () => {
     );
 
     setErrorMessage(message);
-    if (message) return; 
+    if (message) return;
 
     setLoading(true);
 
@@ -64,7 +66,7 @@ const Login = () => {
       const passwordValue = password.current.value;
 
       if (!isSignInForm) {
-       
+        // Sign Up
         const { user } = await createUserWithEmailAndPassword(
           auth,
           emailValue,
@@ -72,7 +74,6 @@ const Login = () => {
         );
         await updateProfile(user, { displayName: name.current.value.trim() });
 
-      
         dispatch(
           addUser({
             uid: user.uid,
@@ -81,9 +82,8 @@ const Login = () => {
           }),
         );
       } else {
-       
+        // Sign In (redirect Header ka onAuthStateChanged karta hai)
         await signInWithEmailAndPassword(auth, emailValue, passwordValue);
-
       }
     } catch (error) {
       setErrorMessage(getFriendlyError(error.code));
@@ -95,8 +95,11 @@ const Login = () => {
   const toggleIsSignInForm = () => {
     setIsSignInForm((prev) => !prev);
     setErrorMessage(null);
-    formRef.current.reset(); 
+    formRef.current.reset();
   };
+
+  // logged in user ko login page par ruke nahi dena (saare hooks ke baad)
+  if (user) return <Navigate to="/browse" replace />;
 
   return (
     <div>

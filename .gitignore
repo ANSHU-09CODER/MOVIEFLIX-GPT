@@ -24,3 +24,5 @@ yarn-error.log*
 .agents/
 .claude/
 skills-lock.json
+
+src/utils/constants.js

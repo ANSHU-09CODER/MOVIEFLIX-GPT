@@ -7,8 +7,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const location = useLocation();
+  const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
 
   useEffect(() => {
@@ -16,10 +16,7 @@ const Header = () => {
       if (user) {
         const { uid, email, displayName } = user;
         dispatch(addUser({ uid, email, displayName }));
-
-      
-        const path = window.location.pathname;
-        if (path === "/login" || path === "/") navigate("/browse");
+        if (location.pathname === "/login") navigate("/browse");
       } else {
         dispatch(removeUser());
         navigate("/login");
@@ -27,13 +24,15 @@ const Header = () => {
     });
 
     return () => unsubscribe();
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, location.pathname]);
 
   const handleSignOut = () => {
     signOut(auth).catch((error) => {
       console.error("Sign out error:", error);
     });
   };
+
+  const onSearchPage = location.pathname === "/search";
 
   return (
     <div className="absolute top-0 left-0 w-full px-6 md:px-16 py-6 bg-gradient-to-b from-black/90 to-transparent z-30 flex justify-between items-center">
@@ -46,7 +45,34 @@ const Header = () => {
       </Link>
 
       {user && (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
+          {onSearchPage ? (
+            <Link
+              to="/browse"
+              className="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-md border border-white/30 transition duration-200"
+            >
+              Home
+            </Link>
+          ) : (
+            <Link
+              to="/search"
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2 rounded-md border border-white/30 transition duration-200"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="16.5" y1="16.5" x2="21" y2="21" />
+              </svg>
+              <span className="hidden md:inline">Search</span>
+            </Link>
+          )}
+
           <span className="text-white text-sm hidden md:block">
             {user.displayName}
           </span>
