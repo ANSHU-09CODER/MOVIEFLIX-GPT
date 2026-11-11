@@ -3,6 +3,7 @@ const ALLOWED = [
   /^movie\/(popular|top_rated|upcoming|now_playing)$/,
   /^trending\/movie\/(day|week)$/,
   /^search\/movie$/,
+  /^movie\/\d+$/,          // ← ye add karo (movie details)
   /^movie\/\d+\/videos$/,
 ];
 

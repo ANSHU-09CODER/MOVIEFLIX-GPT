@@ -7,6 +7,7 @@ import useMovieTrailer from "../Hooks/useMovieTrailer";
 const MovieDetails = () => {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
+  const [error, setError] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
 
@@ -15,6 +16,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     setMovie(null);
+    setError(false);
     setShowInfo(false);
     setShowTrailer(false);
 
@@ -23,8 +25,9 @@ const MovieDetails = () => {
         const res = await fetch(`/api/tmdb?path=movie/${movieId}`);
         if (!res.ok) throw new Error(`TMDB ${res.status}`);
         setMovie(await res.json());
-      } catch (error) {
-        console.error("Movie details error:", error);
+      } catch (err) {
+        console.error("Movie details error:", err);
+        setError(true);
       }
     };
     getMovie();
@@ -32,8 +35,13 @@ const MovieDetails = () => {
 
   if (!movie) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-black text-white">
         <Header />
+        {error && (
+          <div className="min-h-screen flex items-center justify-center px-4 text-center text-gray-300">
+            Movie details load nahi ho payi. Thodi der baad dobara try karo.
+          </div>
+        )}
       </div>
     );
   }
