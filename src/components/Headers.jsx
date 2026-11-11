@@ -11,21 +11,20 @@ const Header = () => {
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const { uid, email, displayName } = user;
-        dispatch(addUser({ uid, email, displayName }));
-        if (location.pathname === "/login") navigate("/browse");
-      } else {
-        dispatch(removeUser());
-        navigate("/login");
-      }
-    });
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user && user.emailVerified) {
+      const { uid, email, displayName } = user;
+      dispatch(addUser({ uid, email, displayName }));
+      if (location.pathname === "/login") navigate("/browse");
+    } else {
+      dispatch(removeUser());
+      navigate("/login");
+    }
+  });
 
-    return () => unsubscribe();
-  }, [dispatch, navigate, location.pathname]);
-
+  return () => unsubscribe();
+}, [dispatch, navigate, location.pathname]);
   const handleSignOut = () => {
     signOut(auth).catch((error) => {
       console.error("Sign out error:", error);

@@ -5,10 +5,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  sendEmailVerification,
+  signOut,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { addUser } from "../utils/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const inputClass =
@@ -34,9 +35,9 @@ const getFriendlyError = (code) => {
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
 
   const formRef = useRef(null);
@@ -47,6 +48,7 @@ const Login = () => {
 
   const handleButtonClick = async (e) => {
     e.preventDefault();
+    setSuccessMessage(null);
 
     const message = checkValidData(
       isSignInForm ? null : name.current.value,
@@ -67,23 +69,39 @@ const Login = () => {
 
       if (!isSignInForm) {
         // Sign Up
-        const { user } = await createUserWithEmailAndPassword(
+        const { user: newUser } = await createUserWithEmailAndPassword(
           auth,
           emailValue,
           passwordValue,
         );
-        await updateProfile(user, { displayName: name.current.value.trim() });
+        await updateProfile(newUser, {
+          displayName: name.current.value.trim(),
+        });
 
-        dispatch(
-          addUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-          }),
+        // verification link bhejo, aur verify hone tak login mat hone do
+        await sendEmailVerification(newUser);
+        await signOut(auth);
+
+        formRef.current.reset();
+        setIsSignInForm(true);
+        setSuccessMessage(
+          "Account created! We sent a verification link to your email. Verify it, then sign in. Check your spam folder too."
         );
       } else {
-        // Sign In (redirect is handled by the listener in Header)
-        await signInWithEmailAndPassword(auth, emailValue, passwordValue);
+        // Sign In
+        const { user: signedUser } = await signInWithEmailAndPassword(
+          auth,
+          emailValue,
+          passwordValue,
+        );
+
+        if (!signedUser.emailVerified) {
+          await signOut(auth);
+          setErrorMessage(
+            "Please verify your email first. Check your inbox (and spam) for the verification link."
+          );
+        }
+        // verified hai to Header ka listener redirect kar dega
       }
     } catch (error) {
       setErrorMessage(getFriendlyError(error.code));
@@ -95,17 +113,17 @@ const Login = () => {
   const toggleIsSignInForm = () => {
     setIsSignInForm((prev) => !prev);
     setErrorMessage(null);
+    setSuccessMessage(null);
     formRef.current.reset();
   };
 
-  // logged-in users should not stay on the login page (after all hooks)
+  // logged-in (verified) user ko login page par ruke nahi dena
   if (user) return <Navigate to="/browse" replace />;
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden">
       <Header />
 
-      {/* background image */}
       <div className="fixed inset-0 -z-10">
         <img
           className="w-full h-full object-cover"
@@ -115,7 +133,6 @@ const Login = () => {
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* form card */}
       <div className="relative flex justify-center items-center min-h-[460px] h-auto py-8 mt-24 md:mt-20 mb-10 mx-auto bg-black/80 w-[92%] max-w-md rounded-lg">
         <form
           ref={formRef}
@@ -165,6 +182,12 @@ const Login = () => {
           {errorMessage && (
             <p className="text-red-400 text-xs md:text-sm bg-red-500/10 border border-red-500/30 rounded px-2 py-1">
               {errorMessage}
+            </p>
+          )}
+
+          {successMessage && (
+            <p className="text-green-400 text-xs md:text-sm bg-green-500/10 border border-green-500/30 rounded px-2 py-1">
+              {successMessage}
             </p>
           )}
 
