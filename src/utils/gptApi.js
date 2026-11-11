@@ -1,4 +1,4 @@
-import { API_OPTIONS, GROQ_KEY } from "./constants";
+import { GROQ_KEY } from "./constants";
 
 // Agar "model not found" aaye, to console.groq.com/docs/models se
 // current model ka naam yahan daal do.
@@ -70,12 +70,11 @@ Andaz Apna Apna (1994)`;
 // Ek movie ke liye TMDB mein search, aur sirf relevant results wapas
 export const searchMovieTMDB = async ({ name, year }) => {
   try {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-        name
-      )}&include_adult=false&language=en-US&page=1`,
-      API_OPTIONS
-    );
+   const response = await fetch(
+  `/api/tmdb?path=search/movie&query=${encodeURIComponent(
+    name
+  )}&include_adult=false&language=en-US&page=1`
+);
     const json = await response.json();
 
     // poster wali movies hi

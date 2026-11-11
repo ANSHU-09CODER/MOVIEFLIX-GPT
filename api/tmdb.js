@@ -1,8 +1,15 @@
+// sirf wahi TMDB paths allowed jo app use karta hai
+const ALLOWED = [
+  /^movie\/(popular|top_rated|upcoming|now_playing)$/,
+  /^trending\/movie\/(day|week)$/,
+  /^search\/movie$/,
+  /^movie\/\d+\/videos$/,
+];
+
 module.exports = async (req, res) => {
   const { path = "", ...query } = req.query;
 
-  // abhi sirf popular movies allowed, baad mein baaki add karenge
-  if (path !== "movie/popular") {
+  if (!ALLOWED.some((rule) => rule.test(path))) {
     return res.status(400).json({ error: "Path not allowed" });
   }
 
@@ -18,12 +25,11 @@ module.exports = async (req, res) => {
     });
     const data = await response.json();
     res.status(response.status).json(data);
-  }  catch (error) {
+  } catch (error) {
     console.error("TMDB proxy error:", error, error.cause);
     res.status(500).json({
       error: "Failed to fetch from TMDB",
       detail: String(error.cause?.code || error.message),
     });
   }
-  
 };

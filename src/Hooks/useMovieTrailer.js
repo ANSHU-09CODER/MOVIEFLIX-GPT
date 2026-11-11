@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS } from "../utils/constants";
 import { addTrailerVideos } from "../utils/movieSlice";
 
 const useMovieTrailer = (movieId) => {
@@ -14,9 +13,9 @@ const useMovieTrailer = (movieId) => {
   const getMoviesVideos = async () => {
     try {
       const data = await fetch(
-        `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
-        API_OPTIONS
+        `/api/tmdb?path=movie/${movieId}/videos&language=en-US`
       );
+      if (!data.ok) throw new Error(`TMDB ${data.status}`);
       const json = await data.json();
       const results = json.results || [];
 
@@ -32,8 +31,7 @@ const useMovieTrailer = (movieId) => {
 
   useEffect(() => {
     movieId && !isSameMovie && getMoviesVideos();
-      // ...
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movieId]);
 };
 
