@@ -32,6 +32,8 @@ const useMovieTrailer = (movieId) => {
 
   useEffect(() => {
     movieId && !isSameMovie && getMoviesVideos();
+      // ...
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movieId]);
 };
 

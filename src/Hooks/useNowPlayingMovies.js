@@ -22,6 +22,8 @@ const useNowPlayingMovies = () => {
 
   useEffect(() => {
     !nowPlayingMovies && getNowPlayingMovies();
+      // ...
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };
 
