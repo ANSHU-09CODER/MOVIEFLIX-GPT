@@ -17,7 +17,9 @@ const parseLine = (line) => {
 };
 
 export const getMoviesFromGPT = async (query) => {
-  const prompt = `Act as a movie recommendation system. Suggest 8 movies for this query: "${query}".
+  const prompt = `Act as a movie recommendation system. The user query is: "${query}".
+If the query is a specific movie title, the FIRST line must be that exact movie, followed by 7 similar movies.
+Otherwise suggest 8 movies matching the query.
 Return ONLY a list, one movie per line, in exactly this format: Title (Year)
 No numbering, no extra text. Example:
 Hera Pheri (2000)

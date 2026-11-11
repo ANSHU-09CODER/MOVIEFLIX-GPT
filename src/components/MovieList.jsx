@@ -17,11 +17,11 @@ const MovieList = ({ title, movies }) => {
   };
 
   return (
-    <div className="px-6 md:px-16 group relative">
+    <div className="px-4 sm:px-8 md:px-16 group relative">
       <h1 className="text-lg md:text-2xl font-bold text-white py-4">{title}</h1>
 
       <div className="relative">
-    
+
         <button
           onClick={() => scroll(-1)}
           aria-label="Scroll left"
@@ -30,16 +30,16 @@ const MovieList = ({ title, movies }) => {
           ‹
         </button>
 
-  
+
         <div
           ref={rowRef}
           className="flex gap-3 overflow-x-scroll pb-4 scrollbar-hide scroll-smooth"
         >
           {movies.map((movie) => (
-<MoviesCard key={movie.id} id={movie.id} poster_path={movie.poster_path} />          ))}
+            <MoviesCard key={movie.id} id={movie.id} poster_path={movie.poster_path} />))}
         </div>
 
-    
+
         <button
           onClick={() => scroll(1)}
           aria-label="Scroll right"

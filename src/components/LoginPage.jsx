@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const inputClass =
-  "w-full p-4 bg-gray-700/80 text-white rounded-md outline-none border border-gray-500 focus:border-white";
+  "w-full p-3 md:p-4 bg-gray-700/80 text-white rounded-md outline-none border border-gray-500 focus:border-white";
 
 const getFriendlyError = (code) => {
   switch (code) {
@@ -82,7 +82,7 @@ const Login = () => {
           }),
         );
       } else {
-        // Sign In (redirect Header ka onAuthStateChanged karta hai)
+        // Sign In (redirect is handled by the listener in Header)
         await signInWithEmailAndPassword(auth, emailValue, passwordValue);
       }
     } catch (error) {
@@ -98,28 +98,31 @@ const Login = () => {
     formRef.current.reset();
   };
 
-  // logged in user ko login page par ruke nahi dena (saare hooks ke baad)
+  // logged-in users should not stay on the login page (after all hooks)
   if (user) return <Navigate to="/browse" replace />;
 
   return (
-    <div>
+    <div className="relative min-h-screen w-full overflow-x-hidden">
       <Header />
 
-      <div className="absolute inset-0 -z-10">
+      {/* background image */}
+      <div className="fixed inset-0 -z-10">
         <img
           className="w-full h-full object-cover"
           src="https://assets.nflxext.com/ffe/siteui/vlv3/29195c81-5ebb-453e-82e9-d3a50737dfb3/web/IN-en-20261026-TRIFECTA-perspective_ef561213-292c-4768-aef0-c1db800e385e_large.jpg"
           alt=""
         />
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      <div className="relative flex justify-center items-center min-h-[500px] h-auto py-8 mt-20 mx-auto bg-black/80 w-full max-w-md rounded-lg">
+      {/* form card */}
+      <div className="relative flex justify-center items-center min-h-[460px] h-auto py-8 mt-24 md:mt-20 mb-10 mx-auto bg-black/80 w-[92%] max-w-md rounded-lg">
         <form
           ref={formRef}
           onSubmit={handleButtonClick}
-          className="w-4/5 flex flex-col gap-5 overflow-hidden"
+          className="w-[88%] md:w-4/5 flex flex-col gap-4 md:gap-5 overflow-hidden"
         >
-          <h1 className="text-white text-3xl font-bold mb-4">
+          <h1 className="text-white text-2xl md:text-3xl font-bold mb-2 md:mb-4">
             {isSignInForm ? "Sign In" : "Sign Up"}
           </h1>
 
@@ -160,7 +163,7 @@ const Login = () => {
           )}
 
           {errorMessage && (
-            <p className="text-red-400 text-xs bg-red-500/10 border border-red-500/30 rounded px-2 py-1">
+            <p className="text-red-400 text-xs md:text-sm bg-red-500/10 border border-red-500/30 rounded px-2 py-1">
               {errorMessage}
             </p>
           )}
