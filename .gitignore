@@ -25,5 +25,5 @@ yarn-error.log*
 .claude/
 skills-lock.json
 
-src/utils/constants.js
+
 .env
