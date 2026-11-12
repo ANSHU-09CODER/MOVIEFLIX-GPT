@@ -214,10 +214,7 @@ const Login = () => {
             </span>
           </button>
 
-          <p className="text-gray-500 text-xs text-center leading-relaxed">
-            Demo project built for learning. Not affiliated with Netflix.
-            Please don't use your Netflix password here.
-          </p>
+
         </form>
       </div>
     </div>
