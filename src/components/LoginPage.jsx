@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const inputClass =
-  "w-full p-3 md:p-4 bg-gray-700/80 text-white rounded-md outline-none border border-gray-500 focus:border-white";
+  "w-full p-3 md:p-4 bg-white/5 text-white placeholder-gray-400 rounded-md outline-none border border-white/20 focus:border-red-500 focus:bg-white/10 transition duration-200";
 
 const getFriendlyError = (code) => {
   switch (code) {
@@ -124,24 +124,28 @@ const Login = () => {
     <div className="relative min-h-screen w-full overflow-x-hidden">
       <Header />
 
-      <div className="fixed inset-0 -z-10">
-        <img
-          className="w-full h-full object-cover"
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/29195c81-5ebb-453e-82e9-d3a50737dfb3/web/IN-en-20261026-TRIFECTA-perspective_ef561213-292c-4768-aef0-c1db800e385e_large.jpg"
-          alt=""
-        />
-        <div className="absolute inset-0 bg-black/40"></div>
+      {/* background: gradient + halka red glow (koi external image nahi) */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-red-950 overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-red-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-red-700/20 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative flex justify-center items-center min-h-[460px] h-auto py-8 mt-24 md:mt-20 mb-10 mx-auto bg-black/80 w-[92%] max-w-md rounded-lg">
+      <div className="relative flex justify-center items-center min-h-[460px] h-auto py-8 mt-24 md:mt-20 mb-10 mx-auto bg-black/70 backdrop-blur-md border border-white/10 shadow-2xl w-[92%] max-w-md rounded-xl">
         <form
           ref={formRef}
           onSubmit={handleButtonClick}
           className="w-[88%] md:w-4/5 flex flex-col gap-4 md:gap-5 overflow-hidden"
         >
-          <h1 className="text-white text-2xl md:text-3xl font-bold mb-2 md:mb-4">
-            {isSignInForm ? "Sign In" : "Sign Up"}
-          </h1>
+          <div className="mb-2 md:mb-4">
+            <h1 className="text-white text-2xl md:text-3xl font-bold">
+              {isSignInForm ? "Welcome back" : "Create account"}
+            </h1>
+            <p className="text-gray-400 text-sm mt-1">
+              {isSignInForm
+                ? "Sign in to browse movies and trailers."
+                : "Sign up to start exploring movies."}
+            </p>
+          </div>
 
           {!isSignInForm && (
             <input
@@ -204,11 +208,16 @@ const Login = () => {
             onClick={toggleIsSignInForm}
             className="text-gray-400 text-sm text-center"
           >
-            {isSignInForm ? "New to Netflix? " : "Already registered? "}
-            <span className="text-white font-semibold">
+            {isSignInForm ? "New here? " : "Already registered? "}
+            <span className="text-white font-semibold hover:underline">
               {isSignInForm ? "Sign Up" : "Sign In"}
             </span>
           </button>
+
+          <p className="text-gray-500 text-xs text-center leading-relaxed">
+            Demo project built for learning. Not affiliated with Netflix.
+            Please don't use your Netflix password here.
+          </p>
         </form>
       </div>
     </div>

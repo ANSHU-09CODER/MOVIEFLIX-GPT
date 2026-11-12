@@ -35,13 +35,12 @@ useEffect(() => {
 
   return (
   <div className="absolute top-0 left-0 w-full px-4 sm:px-8 md:px-16 py-3 md:py-6 bg-gradient-to-b from-black/90 to-transparent z-30 flex justify-between items-center">
-    <Link to={user ? "/browse" : "/login"}>
-      <img
-        className="w-24 sm:w-28 md:w-44"
-        src="https://occ.a.nflxso.net/dnmt/api/v6/iL4oJVDYZ8KLSrJ6eG2OwtghbfQ/AAAAAchJje9GUBJ_ehbO0uOApH8QmRyuvK0LQI9obzFeGtfkpfLyh4FdolMZR4PtvyNoOomDcY7BzTbhFC3gJinH0UadYBg807AKDSPyfsUDm9T3CZKn9OSZN3II7060MZESFcb6YOS9jvzh.svg"
-        alt="Logo"
-      />
-    </Link>
+   <Link
+  to={user ? "/browse" : "/login"}
+  className="text-red-600 font-extrabold tracking-wide text-2xl sm:text-3xl md:text-4xl"
+>
+  MOVIEFLIX
+</Link>
 
     {user && (
       <div className="flex items-center gap-2 md:gap-4">
