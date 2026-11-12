@@ -54,7 +54,7 @@ Andaz Apna Apna (1994)`;
 
     const json = await response.json();
     const text = json.choices?.[0]?.message?.content || "";
-    console.log("AI text:", text);
+ 
 
     return text
       .split("\n")
